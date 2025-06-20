@@ -32,7 +32,7 @@ export function Calendar31() {
   )
 
   return (
-    <Card className="w-fit h-fit scale-75 bg-zinc-900 text-white">
+    <Card className="w-fit h-fit bg-zinc-900 text-white">
       <CardContent>
         <Calendar
           mode="single"

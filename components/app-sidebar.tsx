@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, Folder, Home, Inbox, Kanban, Notebook, Paperclip, Pencil, PuzzleIcon, Search, Settings, Star } from "lucide-react";
+import { Briefcase, Calendar, Dice4, FileText, Folder, Home, Inbox, Kanban, LayoutDashboard, ListTodo, Notebook, Paperclip, Pencil, Puzzle, PuzzleIcon, Search, Settings, Star, Timer } from "lucide-react";
 import Link from "next/link";
 import {
   Sidebar,
@@ -13,80 +13,84 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Calendar31 } from "./calendar-31";
-// Menu items.
-const items = [
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: Home,
-  },
-  {
-    title: "Estágios",
-    url: "/dashboard",
-    icon: Folder,
-  },
-  {
-    title: "Calendário",
-    url: "/dashboard/calendario",
-    icon: Calendar,
-  },
-  {
-    title: "Notas",
-    url: "/dashboard",
-    icon: Pencil,
-  },
-  {
-    title: "Projetos",
-    url: "/dashboard",
-    icon: PuzzleIcon,
-  },
-  {
-    title: "Kanban",
-    url: "/dashboard/kanban",
-    icon: Kanban,
-  },
-  {
-    title: "Meus currículos",
-    url: "/dashboard/curriculos",
-    icon: Paperclip,
-  },
-  {
-    title: "Favoritos",
-    url: "/dashboard/settings",
-    icon: Star,
-  },
+
+const navItems = [
+  { title: "Dashboard", url: "/dashboard", icon: Home },
+  { title: "Estágios", url: "/estagios", icon: Briefcase },
+  { title: "Meus currículos", url: "/curriculos", icon: FileText },
 ];
+
+const productivityItems = [
+  { title: "Calendário", url: "/calendario", icon: Calendar },
+  { title: "Kanban", url: "/kanban", icon: LayoutDashboard },
+  { title: "Projetos", url: "/projetos", icon: Puzzle },
+  { title: "Notas", url: "/notas", icon: Pencil },
+];
+
+const toolsItems = [
+  { title: "Pomodoro", url: "/pomodoro", icon: Timer },
+  { title: "Eisenhower", url: "/eisenhower", icon: ListTodo },
+];
+
 
 export function AppSidebar() {
   return (
-    <Sidebar className="h-screen bg-zinc-800 border-r border-white/10 backdrop-blur-lg text-white">
-      <SidebarContent className="bg-zinc-800">
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-white/50 text-sm">Navegação</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link
-                      href={item.url}
-                      className="flex items-center gap-3 text-white hover:text-purple-400 transition-colors"
-                    >
-                      <item.icon size={18} />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup>
-            <SidebarGroupLabel className="text-white/50 text-sm">Eventos futuros</SidebarGroupLabel>
-            <SidebarGroupContent>
-                <Calendar31/>
-            </SidebarGroupContent>
-        </SidebarGroup>
+    <Sidebar className="h-screen bg-zinc-900 border-r border-white/10 backdrop-blur-lg text-white">
+      <SidebarContent className="bg-zinc-900">
+      <SidebarGroup>
+  <SidebarGroupLabel className="text-zinc-400 text-xs font-normal">Navegação</SidebarGroupLabel>
+  <SidebarGroupContent>
+    <SidebarMenu>
+      {navItems.map((item) => (
+        <SidebarMenuItem key={item.title}>
+          <SidebarMenuButton asChild>
+            <Link href={item.url} className="flex items-center font-medium gap-3 text-zinc-400 hover:bg-zinc-700  hover:text-zinc-400">
+              <item.icon size={18} />
+              <span>{item.title}</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ))}
+    </SidebarMenu>
+  </SidebarGroupContent>
+</SidebarGroup>
+
+<SidebarGroup>
+  <SidebarGroupLabel className="text-zinc-400 text-xs font-normal">Produtividade</SidebarGroupLabel>
+  <SidebarGroupContent>
+    <SidebarMenu>
+      {productivityItems.map((item) => (
+        <SidebarMenuItem key={item.title}>
+          <SidebarMenuButton asChild>
+            <Link href={item.url} className="flex items-center font-medium gap-3 text-zinc-400 hover:bg-zinc-700  hover:text-zinc-400">
+              <item.icon size={18} />
+              <span>{item.title}</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ))}
+    </SidebarMenu>
+  </SidebarGroupContent>
+</SidebarGroup>
+
+<SidebarGroup>
+  <SidebarGroupLabel className="text-zinc-400 text-xs font-normal">Ferramentas</SidebarGroupLabel>
+  <SidebarGroupContent>
+    <SidebarMenu>
+      {toolsItems.map((item) => (
+        <SidebarMenuItem key={item.title}>
+          <SidebarMenuButton asChild>
+            <Link href={item.url} className="flex items-center font-medium gap-3 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-400" >
+              <item.icon size={18} />
+              <span>{item.title}</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ))}
+    </SidebarMenu>
+  </SidebarGroupContent>
+</SidebarGroup>
+
       </SidebarContent>
     </Sidebar>
   );
