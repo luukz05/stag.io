@@ -1,28 +1,31 @@
 "use server";
 
-import { loginSchema } from "./schema";
 import { redirect } from "next/navigation";
+import { loginSchema } from "./schema";
+import { connectDB } from "./mongoose";
+import { User } from "./schema";
 
 export async function loginAction(formData: FormData) {
-  const raw = {
+  await connectDB();
+
+  const parsed = loginSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
-  };
+  });
 
-  const result = loginSchema.safeParse(raw);
-
-  if (!result.success) {
-    // Aqui você pode lançar um erro ou retornar mensagens
-    console.error(result.error.format());
-    return;
+  if (!parsed.success) {
+    return { error: "Dados inválidos." };
   }
 
-  const { email, password } = result.data;
+  const { email, password } = parsed.data;
 
-  // Aqui você faria a validação no banco de dados (mock exemplo):
-  if (email === "admin@stag.io" && password === "123456") {
-    redirect("/dashboard"); // login bem-sucedido
+  const user = await User.findOne({ email });
+
+  if (!user || user.password !== password) {
+    return { error: "E-mail ou senha inválidos." };
   }
 
-  throw new Error("Credenciais inválidas");
+  // Aqui você pode definir um cookie de sessão, token JWT, etc.
+
+  redirect("/dashboard");
 }

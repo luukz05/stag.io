@@ -21,12 +21,6 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent className="space-y-6">
           <Form />
-          <p className="text-center text-sm text-zinc-400">
-            Não tem uma conta?{" "}
-            <a href="/register" className="text-purple-400 hover:underline">
-              Criar conta
-            </a>
-          </p>
         </CardContent>
       </Card>
     </main>
