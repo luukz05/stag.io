@@ -34,15 +34,9 @@ export function Calendar31() {
   return (
     <Card className="w-fit h-fit bg-zinc-900 text-white">
       <CardContent>
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={setDate}
-          className="bg-transparent p-0"
-          required
-        />
+        <Calendar mode="single" selected={date} onSelect={setDate} required />
       </CardContent>
-      <CardFooter className="flex flex-col items-start gap-3 border-t px-4 !pt-4">
+      <CardFooter className="flex flex-col items-start gap-3  px-4 !pt-4">
         <div className="flex w-full items-center justify-between px-1">
           <div className="text-sm font-medium">
             {date?.toLocaleDateString("en-US", {
@@ -61,11 +55,11 @@ export function Calendar31() {
             <span className="sr-only">Add Event</span>
           </Button>
         </div>
-        <div className="flex w-full flex-col gap-2">
+        <div className="flex w-full flex-col gap-2 ">
           {events.map((event) => (
             <div
               key={event.title}
-              className="bg-muted after:bg-primary/70 relative rounded-md p-2 pl-6 text-sm after:absolute after:inset-y-2 after:left-2 after:w-1 after:rounded-full"
+              className="bg-zinc-800 after:bg-zinc-700 relative rounded-md p-2 pl-6 text-sm after:absolute after:inset-y-2 after:left-2 after:w-1 after:rounded-full"
             >
               <div className="font-medium">{event.title}</div>
               {/* <div className="text-muted-foreground text-xs">

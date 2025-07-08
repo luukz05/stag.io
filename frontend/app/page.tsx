@@ -1,4 +1,3 @@
-// app/page.tsx (Next.js App Router)
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,9 +11,15 @@ export default function LP() {
             Bem-vindo ao <span className="text-purple-400">Stag.io</span>
           </h1>
           <p className="text-zinc-300 text-base md:text-lg mb-6">
-            Uma plataforma moderna, rápida e inteligente para conectar ideias e talentos. Transforme seus projetos em realidade com colaboração em tempo real.
+            Uma plataforma moderna, rápida e inteligente para conectar ideias e
+            talentos. Transforme seus projetos em realidade com colaboração em
+            tempo real.
           </p>
-          <Button variant="default" className="text-base px-6 py-2 rounded-xl" asChild>
+          <Button
+            variant="default"
+            className="text-base px-6 py-2 rounded-xl"
+            asChild
+          >
             <Link href="/login">Começar agora</Link>
           </Button>
         </CardContent>

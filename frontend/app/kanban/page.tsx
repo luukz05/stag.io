@@ -54,13 +54,18 @@ export default function KanbanBoard() {
     );
   }
 
-  function addColumn() {
-    if (!newColumnTitle.trim()) return;
-    const newId = Math.max(...kanbans.map((c) => c.id)) + 1;
-    setKanbans([...kanbans, { id: newId, title: newColumnTitle.trim() }]);
-    setNewColumnTitle("");
-    setOpen(false);
-  }
+  // const createKanban = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+
+  //   const formData = new FormData();
+  //   formData.append("title", title);
+
+  //   try {
+  //     await loginAction(formData);
+  //   } catch (err) {
+  //     console.error("Erro no login:", err);
+  //   }
+  // };
 
   return (
     <SidebarProvider>
@@ -71,64 +76,109 @@ export default function KanbanBoard() {
           {/* <SidebarTrigger className="-ml-1" /> */}
           <h1 className="text-3xl font-bold">Kanban Board</h1>
         </header>
+        {kanbans.length === 0 ? (
+          <main className="h-full pt-16 bg-gradient-to-br from-zinc-950 via-zinc-900 to-black text-white flex items-center justify-center">
+            {/* Coluna fantasma para adicionar nova */}
+            <div className="w-96 h-96 flex-shrink-0 bg-white/5  backdrop-blur-md border border-dashed border-white/10 rounded-2xl shadow-inner p-4 flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 transition">
+              <AlertDialog open={open} onOpenChange={setOpen}>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="text-white hover:text-purple-400 hover:bg-transparent flex items-center gap-2"
+                  >
+                    <Plus size={18} />
+                    Criar novo Kanban
+                  </Button>
+                </AlertDialogTrigger>
 
-        {/* Main com scroll-x para colunas, sem scroll-y */}
-        <main className="h-full pt-16 bg-gradient-to-br from-zinc-950 via-zinc-900 to-black text-white">
-          <DndContext onDragEnd={handleDragEnd}>
-            <div className="flex flex-row gap-6 mt-5 h-fit max-h-full px-6 pb-6">
-              {kanbans.map((column) => {
-                const columnCards = cards.filter(
-                  (card) => card.column_id === column.id
-                );
-                return (
-                  <KanbanColumn
-                    key={column.id}
-                    column={column}
-                    cards={columnCards}
-                  />
-                );
-              })}
+                <AlertDialogContent className="sm:max-w-[425px]">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Criar novo Kanban</AlertDialogTitle>
+                  </AlertDialogHeader>
 
-              {/* Coluna fantasma para adicionar nova */}
-              <div className="w-96 flex-shrink-0 bg-white/5  backdrop-blur-md border border-dashed border-white/10 rounded-2xl shadow-inner p-4 flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 transition">
-                <AlertDialog open={open} onOpenChange={setOpen}>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="text-white hover:text-purple-400 hover:bg-transparent flex items-center gap-2"
-                    >
-                      <Plus size={18} />
-                      Adicionar nova lista
-                    </Button>
-                  </AlertDialogTrigger>
-
-                  <AlertDialogContent className="sm:max-w-[425px]">
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Criar nova coluna</AlertDialogTitle>
-                    </AlertDialogHeader>
-
+                  <form action="">
                     <div className="flex flex-col gap-4 mt-2">
                       <input
                         type="text"
-                        placeholder="Título da coluna"
+                        placeholder="Título do Kanban"
                         className="bg-zinc-900 text-white rounded-md p-2 border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-purple-400"
-                        value={newColumnTitle}
-                        onChange={(e) => setNewColumnTitle(e.target.value)}
+                        // value={newKanbanTitle}
+                        // onChange={(e) => setNewKanbanTitle(e.target.value)}
                         autoFocus
                       />
-                      <div className="flex justify-end gap-2">
-                        <AlertDialogCancel asChild>
-                          <Button variant="outline">Cancelar</Button>
-                        </AlertDialogCancel>
-                        <Button onClick={addColumn}>Criar</Button>
-                      </div>
                     </div>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
+                    <div className="flex justify-end gap-2">
+                      <AlertDialogCancel asChild>
+                        <Button variant="outline">Cancelar</Button>
+                      </AlertDialogCancel>
+                      {/* <Button onClick={addKanban}>Criar</Button> */}
+                    </div>
+                  </form>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
-          </DndContext>
-        </main>
+          </main>
+        ) : (
+          <main className="h-full pt-16 bg-gradient-to-br from-zinc-950 via-zinc-900 to-black text-white">
+            <DndContext onDragEnd={handleDragEnd}>
+              <div className="flex flex-row gap-6 mt-5 h-fit max-h-full px-6 pb-6">
+                {kanbans.map((column) => {
+                  const columnCards = cards.filter(
+                    (card) => card.column_id === column.id
+                  );
+                  return (
+                    <KanbanColumn
+                      key={column.id}
+                      column={column}
+                      cards={columnCards}
+                    />
+                  );
+                })}
+
+                {/* Coluna fantasma para adicionar nova */}
+                <div className="w-96 flex-shrink-0 bg-white/5  backdrop-blur-md border border-dashed border-white/10 rounded-2xl shadow-inner p-4 flex flex-col items-center justify-center text-white cursor-pointer hover:bg-white/10 transition">
+                  <AlertDialog open={open} onOpenChange={setOpen}>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className="text-white hover:text-purple-400 hover:bg-transparent flex items-center gap-2"
+                      >
+                        <Plus size={18} />
+                        Adicionar nova lista
+                      </Button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent className="sm:max-w-[425px]">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Criar nova coluna</AlertDialogTitle>
+                      </AlertDialogHeader>
+
+                      <form action="">
+                        <div className="flex flex-col gap-4 mt-2">
+                          <input
+                            type="text"
+                            placeholder="Título da coluna"
+                            className="bg-zinc-900 text-white rounded-md p-2 border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                            value={newColumnTitle}
+                            onChange={(e) => setNewColumnTitle(e.target.value)}
+                            autoFocus
+                          />
+                          <div className="flex justify-end gap-2">
+                            <AlertDialogCancel asChild>
+                              <Button variant="outline">Cancelar</Button>
+                            </AlertDialogCancel>
+                            {/* <Button onClick={addColumn}>Criar</Button> */}
+                          </div>
+                        </div>
+                      </form>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              </div>
+            </DndContext>
+          </main>
+        )}
+        {/* Main com scroll-x para colunas, sem scroll-y */}
       </SidebarInset>
     </SidebarProvider>
   );
