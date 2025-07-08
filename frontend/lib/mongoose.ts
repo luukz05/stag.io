@@ -1,11 +1,15 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGODB_URI!;
-
-if (!MONGODB_URI) throw new Error("Defina a MONGODB_URI no .env");
+let isConnected = false;
 
 export async function connectDB() {
-  if (mongoose.connection.readyState >= 1) return;
+  if (isConnected) return;
 
-  return mongoose.connect(MONGODB_URI);
+  try {
+    await mongoose.connect(process.env.MONGODB_URI!);
+    isConnected = true;
+    console.log("🟢 MongoDB conectado");
+  } catch (error) {
+    console.error("🔴 Erro ao conectar no MongoDB", error);
+  }
 }
