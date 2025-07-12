@@ -12,7 +12,12 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -21,6 +26,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { id } from "date-fns/locale";
+import { get } from "http";
 
 type Card = {
   id: number;
@@ -40,32 +49,60 @@ export default function KanbanBoard() {
   const [newColumnTitle, setNewColumnTitle] = useState("");
   const [open, setOpen] = useState(false);
 
-  function handleDragEnd(event: any) {
+  const getCardsPos = (id: number) => cards.findIndex((card) => card.id === id);
+
+  const handleDragEnd = (event: any) => {
     const { active, over } = event;
-    if (!over) return;
+    if (!over || active.id === over.id) return;
 
-    const cardId = parseInt(active.id);
-    const newColumnId = parseInt(over.id);
+    const activeCardId = parseInt(active.id);
+    const overCardId = parseInt(over.id);
 
-    setCards((prevCards) =>
-      prevCards.map((card) =>
-        card.id === cardId ? { ...card, column_id: newColumnId } : card
-      )
+    const activeCard = cards.find((card) => card.id === activeCardId);
+    const overCard = cards.find((card) => card.id === overCardId);
+
+    if (!activeCard || !overCard) return;
+
+    const activeColumnId = activeCard.column_id;
+    const overColumnId = overCard.column_id;
+
+    // Lista de cards da coluna de origem e destino
+    const activeColumnCards = cards.filter(
+      (c) => c.column_id === activeColumnId
     );
-  }
+    const overColumnCards = cards.filter((c) => c.column_id === overColumnId);
 
-  // const createKanban = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
+    const activeIndex = activeColumnCards.findIndex(
+      (c) => c.id === activeCardId
+    );
+    const overIndex = overColumnCards.findIndex((c) => c.id === overCardId);
 
-  //   const formData = new FormData();
-  //   formData.append("title", title);
+    if (activeColumnId === overColumnId) {
+      // Reordenando dentro da mesma coluna
+      const updatedColumnCards = arrayMove(
+        activeColumnCards,
+        activeIndex,
+        overIndex
+      );
 
-  //   try {
-  //     await loginAction(formData);
-  //   } catch (err) {
-  //     console.error("Erro no login:", err);
-  //   }
-  // };
+      const updatedCards = cards.map((card) => {
+        if (card.column_id !== activeColumnId) return card;
+        return updatedColumnCards.find((c) => c.id === card.id) || card;
+      });
+
+      setCards(updatedCards);
+    } else {
+      // Movendo entre colunas
+      const updatedCards = cards.map((card) => {
+        if (card.id === activeCardId) {
+          return { ...card, column_id: overColumnId };
+        }
+        return card;
+      });
+
+      setCards(updatedCards);
+    }
+  };
 
   return (
     <SidebarProvider>
@@ -204,29 +241,39 @@ function KanbanColumn({ column, cards }: { column: Column; cards: Card[] }) {
         </Button>
       </div>
 
-      <div className="flex flex-col gap-3 pr-1">
-        {cards.length === 0 ? (
-          <p className="text-sm text-zinc-400 italic">
-            Nenhuma tarefa nesta coluna.
-          </p>
-        ) : (
-          cards.map((card) => <KanbanCard key={card.id} card={card} />)
-        )}
-      </div>
+      <SortableContext
+        items={cards.map((card) => card.id.toString())}
+        strategy={verticalListSortingStrategy}
+      >
+        <div className="flex flex-col gap-3 pr-1">
+          {cards.length === 0 ? (
+            <p className="text-sm text-zinc-400 italic">
+              Nenhuma tarefa nesta coluna.
+            </p>
+          ) : (
+            cards.map((card) => <KanbanCard key={card.id} card={card} />)
+          )}
+        </div>
+      </SortableContext>
     </div>
   );
 }
 
 function KanbanCard({ card }: { card: Card }) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({
-      id: card.id.toString(),
-    });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: card.id.toString(),
+  });
 
   const style = {
-    transform: transform
-      ? `translate(${transform.x}px, ${transform.y}px)`
-      : undefined,
+    transform: CSS.Transform.toString(transform),
+    transition,
     opacity: isDragging ? 0.5 : 1,
     cursor: "grab",
   };
@@ -240,7 +287,6 @@ function KanbanCard({ card }: { card: Card }) {
       className="bg-white/10 border border-white/10 backdrop-blur-md w-full max-h-20 rounded-xl p-4 text-white shadow flex flex-col justify-between"
     >
       <h3 className="font-medium break-words">{card.text}</h3>
-      {/* <p className="text-sm text-zinc-400 break-words">{card.description}</p> */}
     </div>
   );
 }
